@@ -12,6 +12,9 @@ from email.mime.multipart import MIMEMultipart
 import pandas as pd
 from datetime import datetime
 
+
+#fichier JSON
+data_frame_final = pd.read_json("C:/Users/adrie/OneDrive/Bureau/matches.json")
 # Données expéditeurs
 destinataire_email = "adrien.bolmont@etu.unistra.fr"
 # Données des utilisateurs
@@ -19,13 +22,10 @@ donnees_utilisateurs = {
     'name': ['Dupont', 'Durand', 'Tremblay'],
     'fname': ['Jean', 'Marie', 'Pierre'],
     'mail': ['adrien.bolmont@etu.unistra.fr', 'adrienbolmontempsai@gmail.com', 'adrienbolmont@gmail.com'],
-    'Club': ['Real Madrid', 'Liverpool', 'FC Barcelona']
+    'Club': ['Real Madrid', 'Liverpool', 'Barcelona']
 }
-data_match = {
-    'team_1': ['Real Madrid', 'Paris','Lyon'],
-    'team_2': ['Sochaux', 'Liverpool','Strasbourg'],
-    'classico': ['FALSE','TRUE','FASLE'],
-    }
+
+data_match = pd.read_json("C:/Users/adrie/OneDrive/Bureau/matches.json")
 
 
 # Création du DataFrame de data user et matchs
@@ -38,6 +38,10 @@ def type_finder(df_user_data, df_match_data):
     for team in df_match_data.values.flatten():
         df_user_data['TYPE'] = df_user_data['Club'].isin(df_match_data.values.flatten()).astype(int)
 type_finder(df_user_data, df_match_data)
+
+
+
+
 
 #construction de l'objet du mail avec la date du jour
 def sujet_mail(phrase_fixe):
@@ -55,8 +59,8 @@ def envoyer_email(destinataire_email, corps_mail):
     expediteur_email = "pythontesting@laposte.net"
     message['From'] = expediteur_email
     message['To'] = destinataire_email
-    message['Subject'] = sujet_mail(" Vos prévisions pour la semaine du")
-    message.attach(MIMEText(corps_mail, 'plain'))  # Utilisation de corps_mail au lieu de corps_message
+    message['Subject'] = sujet_mail(" Vos matchs pour la semaine du")
+    message.attach(MIMEText(corps_mail, 'plain'))
     # Établir une connexion avec le serveur SMTP de Laposte
     serveur_smtp = smtplib.SMTP('smtp.laposte.net', 587)
     serveur_smtp.starttls()
@@ -79,8 +83,8 @@ def corps_mail(df_user_data, df_match_data):
     type_finder(df_user_data, df_match_data) 
     
     # Creation de 2 variables de corps de base
-    corps_type_0_base = "Bonjour, voici la liste des matchs que nous avons trouvé intéressants pour vous : \n\n"
-    corps_type_1_base = "Bonjour, voici la liste des matchs de la semaine : \n\n"
+    corps_type_0_base = ", voici la liste des matchs que nous avons trouvé intéressants pour vous : \n\n"
+    corps_type_1_base = ", voici la liste des matchs de la semaine : \n\n"
 
     # Convertion de df_match_data en une chaîne de caractères formatés
     matchs_str = df_match_data.iloc[:, :2].to_string(index=False)
@@ -88,8 +92,8 @@ def corps_mail(df_user_data, df_match_data):
     for index, row in df_user_data.iterrows():
         destinataire_email = row['mail']
         
-        corps_type_0 = corps_type_0_base + matchs_str + "\n\nBonne semaine. \nSalutations footbalistiques."
-        corps_type_1 = corps_type_1_base + matchs_str + "\n\nNotez que votre équipe favorite joue. \nSalutations footbalistiques."
+        corps_type_0 = "Bonjour " + row['fname'] + "\n\nBonne semaine. \nSalutations footbalistiques."
+        corps_type_1 = "Bonjour " + row['fname'] + "\n\nVoici les matchs que nous vous conseillons cette semaine : \nBonne nouvelle ! Votre équipe, "+ row['Club']+ " joue le "+  +"\nSalutations footbalistiques."
 
         if row['TYPE'] == 1: #affectation d'un corps de mail selon le type de parieur (0 ou 1)
             envoyer_email(destinataire_email, corps_type_1)
