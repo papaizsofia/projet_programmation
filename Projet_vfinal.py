@@ -341,15 +341,21 @@ def projet(User, jour, mois, annee):
     Rankings = {}
     date = datetime.date(annee, mois, jour)
     
-    Rankings = rankings()
-    Matchs = matchs(games_link(jour, mois, annee))
-    classico(Matchs, Classics)
-    position(Matchs,Rankings, Leagues_dict)
-    corps_mail(User, Matchs, date)
-
+    date1 = datetime.datetime(annee, mois, jour)
+    tomorrow = datetime.datetime.now() + datetime.timedelta(days=1)
+    
+    if date1 >= tomorrow:
+        Rankings = rankings()
+        Matchs = matchs(games_link(jour, mois, annee))
+        classico(Matchs, Classics)
+        position(Matchs,Rankings, Leagues_dict)
+        corps_mail(User, Matchs, date)
+        print("Mail envoyé!")
+        
+    else:
+        print("Vous devez choisir une date à venir.")
 #----------------------#
 #   Foncton finale     #
 #----------------------#
 
-#Exemple:
-projet(df_user_data, 22, 4, 2024)
+projet(df_user_data, 22, 5, 2024)
