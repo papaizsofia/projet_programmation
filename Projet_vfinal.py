@@ -330,9 +330,13 @@ def corps_mail(User, matchs_dict, date):
         Message3 = autres_match(matchs_dict)
         Message4 = "\n\nSalutations footbalistiques."
         
-        Message_f = Message0 + Message1 + Message2 + Message3 + Message4
-        
-        envoyer_email(row['mail'], Message_f, date)
+        if Message1 == '' and Message2 == '' and Message3 == '':
+            print('Pas de matchs pour envoyer')
+            break
+        else:
+            Message_f = Message0 + Message1 + Message2 + Message3 + Message4
+            envoyer_email(row['mail'], Message_f, date)
+            print("Mail envoyé!")
   
 def projet(User, jour, mois, annee):
     global Classics
@@ -350,7 +354,6 @@ def projet(User, jour, mois, annee):
         classico(Matchs, Classics)
         position(Matchs,Rankings, Leagues_dict)
         corps_mail(User, Matchs, date)
-        print("Mail envoyé!")
         
     else:
         print("Vous devez choisir une date à venir.")
@@ -358,4 +361,4 @@ def projet(User, jour, mois, annee):
 #   Foncton finale     #
 #----------------------#
 
-projet(df_user_data, 22, 5, 2024)
+projet(df_user_data, 21, 4, 2024)
